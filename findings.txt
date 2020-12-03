@@ -1,0 +1,29 @@
+* Shutdown protocol / "early FIN"
+* Windows stack sends RST when closing with incoming data (as well as on lots of other cases, e.g. sent unacked data?)
+
+
+* Block vs. non-block:
+** also depends on WiFi vs. LAN
+
+** WLAN
+** block: most of the time reading chunks of 64k or 500k, only reaching about 50mbps, TCP window gets exhausted (although sometimes the window gets increased to a better value)
+** nonblock:  most of the time reading chunks of 1460 - 16k, reaching 200mbps (network speed), TCP window never gets exhausted (and it seems that a window size increase kicks in a lot faster, even though its unneeded)
+
+** LAN
+** block: single big receive (2g chunk), but only when wireshark is _not_ running, sometimes also bad performance when wireshark is running
+** nonblock: wireshark seems to influence the result (OS level hangup), chunks from 1460 to about 20k ("small - big" pattern)
+
+* general - for some "magical" reason windows manages to arrive at the maximum throughput without packet drops (at least when testing in LAN)
+* reading in a nonblocking way seems to be "better" for the TCP algorithms, reaches max bandwidth regardless of wireshark/system load
+
+* Buffers
+** It seems that send buffer is not really limited, even 2GB can be put in there atomically
+** Sending app can even terminate early, FINS will still be sent as expected
+
+** Blocking code:
+*** Packets are still dripping in at target while sending app was closed
+*** Memory shows up in receiver at taskmanager (so where "are" the packets? according to wireshark the sender still has them, but memory shows up at the receiver)
+
+** Nonblocking code:
+*** Packets are still dripping in at target while sending app was closed
+*** Memory shows a more "sane" value (at sender high while sending, at receiver going up while receiving)

@@ -35,12 +35,8 @@ what even "is" layer1 w.r.t. ethernet - preemble, inter frame gap
 
 what is QUIC, look into it
 
-TCP RST (when not listening?, trigger from code? - called "when closing while there is unprocessed data" -> check, also check alt f4)
-
 great article about winsock + delayed ack + nagle: https://docs.microsoft.com/en-us/troubleshoot/windows/win32/data-segment-tcp-winsock
 
 receive _window_ (max bytes in flight) vs receive _buffer_ (buffered data before application reads it) - any difference, what happens when the recv buffer is full?
 
-send buffer - test max etc.
-
-test congestion window / slow start
+send buffer - test max - do not read at receiver while sending 2G (but this may actually be a test of the receive buffer)

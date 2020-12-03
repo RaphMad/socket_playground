@@ -222,7 +222,8 @@ int receiveData(const SOCKET socket, char *const buffer, const int length)
     {
         if (WSAGetLastError() == WSAEWOULDBLOCK)
         {
-            // Not ideal, because we will most likely be called in a loop - either busy waiting or artificial sleeps.
+            // Not ideal, because we will most likely be called in a loop - either busy waiting
+            // or sleeps that may queue up incoming data.
             //Sleep(1);
         }
         else
