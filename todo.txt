@@ -1,0 +1,46 @@
+C: https://www.binarytides.com/winsock-socket-programming-tutorial/
+
+microsoft tut: https://docs.microsoft.com/en-us/windows/win32/winsock/getting-started-with-winsock
+
+Check:
+
+nagle with lots of small packets (different graph w/w.o nagle? may need a slower network to have an effect)
+Send and rcv. buffer sizes
+
+do multiple attempts
+
+windows
+
+blocking
+non-blocking
+async
+wsa event based
+overlapped i/o manual
+overlapped i/o + completion ports
+
+unix
+blocking
+non-blocking
+async
+
+tcp keepalive? (should be 2h in windows, but sometimes it is also referred to as 45s)
+tcp half closed? (is this even possible from winsock?, maybe with raw sockets)
+
+check PSH flag (not controllable from application, only occurs with multi-segment transmissions?
+
+also do a small udp for comparison
+
+check wireshark for layers with checksum, check what they actually do (do routers just discard packages with incorrect checksum?)
+what even "is" layer1 w.r.t. ethernet - preemble, inter frame gap
+
+what is QUIC, look into it
+
+TCP RST (when not listening?, trigger from code? - called "when closing while there is unprocessed data" -> check, also check alt f4)
+
+great article about winsock + delayed ack + nagle: https://docs.microsoft.com/en-us/troubleshoot/windows/win32/data-segment-tcp-winsock
+
+receive _window_ (max bytes in flight) vs receive _buffer_ (buffered data before application reads it) - any difference, what happens when the recv buffer is full?
+
+send buffer - test max etc.
+
+test congestion window / slow start

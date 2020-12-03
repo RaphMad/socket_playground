@@ -1,0 +1,42 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "cppbuild",
+			"label": "C_build",
+			"command": "cl.exe",
+			"args": [
+				"/W4",
+				"/Zi",
+				"/EHsc",
+				"/Fe:",
+				"${fileDirname}\\out\\${fileBasenameNoExtension}.exe",
+				"/Fd:",
+				"${fileDirname}\\out\\",
+				"/Fo:",
+				"${fileDirname}\\out\\",
+				"..\\socket.c",
+				"${file}"
+			],
+			"options": {
+				"cwd": "${fileDirname}"
+			},
+			"problemMatcher": [
+				"$msCompile"
+			],
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			},
+			"detail": "compiler: cl.exe",
+			"presentation": {
+				"echo": true,
+				"reveal": "silent",
+				"focus": true,
+				"panel": "shared",
+				"showReuseMessage": false,
+				"clear": false
+			}
+		}
+	]
+}
