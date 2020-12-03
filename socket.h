@@ -18,3 +18,5 @@ int receiveData(SOCKET socket, char *buffer, int length);
 
 void sendAllData(SOCKET socket, const char *buffer, size_t length);
 size_t receiveUntil(SOCKET socket, char *buffer, size_t length, char delimiter);
+
+void unblock(SOCKET socket);

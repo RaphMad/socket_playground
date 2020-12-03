@@ -212,9 +212,7 @@ int sendData(const SOCKET socket, const char *const const buffer, const int leng
 
 int receiveData(const SOCKET socket, char *const buffer, const int length)
 {
-    printf("Waiting for data...\n");
-
-    const int result = recv(socket, buffer, length, 0);
+    int result = recv(socket, buffer, length, 0);
 
     if (result == 0)
     {
@@ -222,7 +220,15 @@ int receiveData(const SOCKET socket, char *const buffer, const int length)
     }
     else if (result == SOCKET_ERROR)
     {
-        printWSAErrorCleanupAndExit("recv()");
+        if (WSAGetLastError() == WSAEWOULDBLOCK)
+        {
+            // Not ideal, because we will most likely be called in a loop - either busy waiting or artificial sleeps.
+            //Sleep(1);
+        }
+        else
+        {
+            printWSAErrorCleanupAndExit("recv()");
+        }
     }
     else
     {
@@ -246,18 +252,47 @@ void sendAllData(const SOCKET socket, const char *const buffer, const size_t len
 
 size_t receiveUntil(const SOCKET socket, char *const buffer, const size_t length, const char delimiter)
 {
+    printf("Waiting for data terminated by <%c> up to an amount of %d bytes...\n", delimiter, length);
+
     size_t receivedBytes = 0;
 
     while (receivedBytes <= length)
     {
-        const size_t bytesSentNow = receiveData(socket, buffer + receivedBytes, MIN(length, INT_MAX) - receivedBytes);
-        receivedBytes += bytesSentNow;
+        const size_t max_chunk = MIN(length - receivedBytes, INT_MAX);
+        const size_t result = receiveData(socket, buffer + receivedBytes, max_chunk);
 
-        if (bytesSentNow == 0 || buffer[receivedBytes - 1] == delimiter)
+        // Returning with -1 is normal for non-blocking cases when no data was available.
+        if (result != -1)
         {
-            break;
+            receivedBytes += result;
+
+            if (result == 0 || buffer[receivedBytes - 1] == delimiter)
+            {
+                break;
+            }
         }
     }
 
     return receivedBytes;
+}
+
+void unblock(const SOCKET socket)
+{
+
+    if (socket != INVALID_SOCKET)
+    {
+        printf("Unblocking socket...");
+
+        unsigned long ul = 1;
+
+        if (ioctlsocket(socket, FIONBIO, &ul) == SOCKET_ERROR)
+        {
+            printLastWSAError("shutdown()");
+            closeSocket(socket);
+        }
+        else
+        {
+            printf(SUCCESS);
+        }
+    }
 }
