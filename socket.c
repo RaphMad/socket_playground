@@ -1,15 +1,18 @@
 #include "socket.h"
 
 #include <stdio.h>
+#include <limits.h>
 #include <ws2tcpip.h>
 
 #pragma comment(lib, "ws2_32.lib")
 
 #define ANSI_COLOR_RED "\x1b[31m"
 #define ANSI_COLOR_GREEN "\x1b[32m"
+#define ANSI_COLOR_YELLOW "\x1b[33m"
 #define ANSI_COLOR_RESET "\x1b[0m"
 
 #define SUCCESS ANSI_COLOR_GREEN " success" ANSI_COLOR_RESET "\n"
+#define INFO_MESSAGE(string) ANSI_COLOR_YELLOW string ANSI_COLOR_RESET
 #define ERROR_MESSAGE(string) ANSI_COLOR_RED string ANSI_COLOR_RESET
 
 static WSADATA wsaData;
@@ -191,6 +194,22 @@ void connectToServerSocket(const SOCKET clientSocket, const char *const ip, cons
     printf(SUCCESS);
 }
 
+int sendData(const SOCKET socket, const char *const const buffer, const int length)
+{
+    const int result = send(socket, buffer, length, 0);
+
+    if (result == SOCKET_ERROR)
+    {
+        printWSAErrorCleanupAndExit("send()");
+    }
+    else
+    {
+        printf(INFO_MESSAGE("Sent %d bytes\n"), result);
+    }
+
+    return result;
+}
+
 int receiveData(const SOCKET socket, char *const buffer, const int length)
 {
     printf("Waiting for data...\n");
@@ -205,18 +224,40 @@ int receiveData(const SOCKET socket, char *const buffer, const int length)
     {
         printWSAErrorCleanupAndExit("recv()");
     }
+    else
+    {
+        printf(INFO_MESSAGE("Received %d bytes\n"), result);
+    }
 
     return result;
 }
 
-int sendData(const SOCKET socket, const char *const const buffer, const int length)
-{
-    const int result = send(socket, buffer, length, 0);
+#define MIN(a, b) (((a) < (b)) ? (a) : (b))
 
-    if (result == SOCKET_ERROR)
+void sendAllData(const SOCKET socket, const char *const buffer, const size_t length)
+{
+    size_t sentBytes = 0;
+
+    while (sentBytes != length)
     {
-        printWSAErrorCleanupAndExit("send()");
+        sentBytes += sendData(socket, buffer + sentBytes, MIN(length, INT_MAX) - sentBytes);
+    }
+}
+
+size_t receiveUntil(const SOCKET socket, char *const buffer, const size_t length, const char delimiter)
+{
+    size_t receivedBytes = 0;
+
+    while (receivedBytes <= length)
+    {
+        const size_t bytesSentNow = receiveData(socket, buffer + receivedBytes, MIN(length, INT_MAX) - receivedBytes);
+        receivedBytes += bytesSentNow;
+
+        if (bytesSentNow == 0 || buffer[receivedBytes - 1] == delimiter)
+        {
+            break;
+        }
     }
 
-    return result;
+    return receivedBytes;
 }

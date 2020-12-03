@@ -13,5 +13,8 @@ SOCKET acceptClientSocket(SOCKET serverSocket);
 
 void connectToServerSocket(SOCKET clientSocket, const char *ip, u_short port);
 
-int receiveData(SOCKET socket, char *buffer, int length);
 int sendData(SOCKET socket, const char *buffer, int length);
+int receiveData(SOCKET socket, char *buffer, int length);
+
+void sendAllData(SOCKET socket, const char *buffer, size_t length);
+size_t receiveUntil(SOCKET socket, char *buffer, size_t length, char delimiter);

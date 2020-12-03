@@ -1,26 +1,27 @@
 #include <stdio.h>
-#include "..\\\socket.h"
+#include "..\\socket.h"
 
-#define BUFFER_SIZE 1024
-char buffer[BUFFER_SIZE];
+#define BUFFER_SIZE 1900000000
+static char buffer[BUFFER_SIZE];
 
-const char *const ip = "127.0.0.33";
-const u_short port = 9000;
+static const char *const ip = "192.168.1.1";
+static const u_short port = 9000;
 
-void sendMessageToServer(SOCKET socket, const char *const message, const int size);
+void sendMessageToServer(SOCKET socket, const char *message, size_t size);
 void recieveMessageFromServer(SOCKET socket);
 
 int main()
 {
-
     initializeWinsock();
 
     const SOCKET clientSocket = createSocket();
 
     connectToServerSocket(clientSocket, ip, port);
 
-    const char message[] = {'p', 'i', 'n', 'g'};
-    sendMessageToServer(clientSocket, message, sizeof(message));
+    const size_t messageLength = BUFFER_SIZE - 2;
+    memset(buffer, 'C', messageLength - 1);
+    buffer[messageLength - 1] = 'X';
+    sendMessageToServer(clientSocket, buffer, messageLength);
 
     // Graceful shutodwn - we signal to the server that we no longer want to send data.
     // This allows to send an "early FIN" to the server.
@@ -38,14 +39,12 @@ int main()
     return EXIT_SUCCESS;
 }
 
-void sendMessageToServer(const SOCKET socket, const char *const message, const int size)
+void sendMessageToServer(const SOCKET socket, const char *const message, const size_t size)
 {
-    const int numberOfBytesSent = sendData(socket, message, size);
-    printf("Sent %d bytes to server: <%.*s>\n", numberOfBytesSent, numberOfBytesSent, message);
+    sendAllData(socket, message, size);
 }
 
 void recieveMessageFromServer(const SOCKET socket)
 {
-    const int numberOfBytesReceived = receiveData(socket, buffer, BUFFER_SIZE);
-    printf("Received %d bytes: <%.*s>\n", numberOfBytesReceived, numberOfBytesReceived, buffer);
+    receiveUntil(socket, buffer, BUFFER_SIZE, 'Y');
 }
