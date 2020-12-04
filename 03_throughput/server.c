@@ -2,11 +2,11 @@
 #include <signal.h>
 #include "..\\socket.h"
 
-#define BUFFER_SIZE 1900000000
+#define BUFFER_SIZE 100 * 1000 * 1000
 static char buffer[BUFFER_SIZE];
 
-static const char *const ip = "192.168.1.1";
-static const u_short port = 9000;
+static const char *const serverIp = "192.168.1.1";
+static const u_short serverPort = 9000;
 
 static volatile SOCKET serverSocket = INVALID_SOCKET;
 
@@ -20,7 +20,7 @@ int main()
     initializeWinsock();
 
     serverSocket = createSocket();
-    bindServerSocket(serverSocket, ip, port);
+    bindServerSocket(serverSocket, serverIp, serverPort);
     listenOnServerSocket(serverSocket);
 
     const SOCKET clientSocket = acceptClientSocket(serverSocket);
@@ -32,30 +32,19 @@ int main()
 
         unblock(clientSocket);
 
-        echoNextMessage(clientSocket);
+        // Read data until the buffer is full or 'X' is received.
+        receiveUntil(clientSocket, buffer, BUFFER_SIZE, 'X');
 
-        // clientSocket shutdown is done within echoNextMessage() at the earliest point in time possible
+        // Graceful shutdown
+        shutdownSocket(clientSocket, SD_BOTH);
+
+        // clientSocket shutdown is done within echoNextMessage() at the earliest point in time possible.
         closeSocket(clientSocket);
     }
 
     cleanupWinsock();
 
     return EXIT_SUCCESS;
-}
-
-void echoNextMessage(const SOCKET socket)
-{
-    const u_long numberOfBytesReceived = receiveUntil(socket, buffer, BUFFER_SIZE, 'X');
-
-    // Graceful shutdown.
-    // This has no notable effect on our static communication protocol,
-    // but would cause the connection to be reset if the client tried to send more data.
-    shutdownSocket(socket, SD_RECEIVE);
-
-    const char postfix[] = {'S', 'Y'};
-    memcpy(buffer + numberOfBytesReceived, postfix, sizeof(postfix));
-
-    sendAllData(socket, buffer, numberOfBytesReceived + sizeof(postfix));
 }
 
 void handleSigInt(const int signum)
