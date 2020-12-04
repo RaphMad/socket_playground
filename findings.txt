@@ -27,3 +27,10 @@
 ** Nonblocking code:
 *** Packets are still dripping in at target while sending app was closed
 *** Memory shows a more "sane" value (at sender high while sending, at receiver going up while receiving)
+
+- tocheck next - whats the max receive buffer?
+- check tcp keepalive duration
+- experiment with half-open / half-closed scenarios
+- check PSH flag, when is it set?
+- do a small udp app for comparison, esp. how it reaches max bandwidth
+- try to experiment with nagle + delayed acks
