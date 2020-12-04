@@ -25,11 +25,17 @@ int main()
 
     const SOCKET clientSocket = acceptClientSocket(serverSocket);
 
+    // No longer need the server socket at this point.
+    closeSocket(serverSocket);
+
     if (clientSocket != INVALID_SOCKET)
     {
-        // No longer need the server socket at this point.
-        closeSocket(serverSocket);
-
+        // In theory, unblocking a socket for receiving should not yield
+        // big performance gains (as we are reading in al oop anyway).
+        // Actually it seems the blocking TCP implementation is too conservative with the chunks
+        // it delivers so some scenarios (WLAN) the receive window fills up.
+        // This does not happen with non-blocking reads in a loop in the same WLAN environment
+        // (it can also be seen that smaller chunks are received and wireshark shows no TCP window).
         unblock(clientSocket);
 
         // Read data until the buffer is full or 'X' is received.
@@ -37,8 +43,6 @@ int main()
 
         // Graceful shutdown
         shutdownSocket(clientSocket, SD_BOTH);
-
-        // clientSocket shutdown is done within echoNextMessage() at the earliest point in time possible.
         closeSocket(clientSocket);
     }
 

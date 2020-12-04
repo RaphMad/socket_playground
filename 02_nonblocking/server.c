@@ -28,11 +28,11 @@ int main()
 
     const SOCKET clientSocket = acceptClientSocket(serverSocket);
 
+    // No longer need the server socket at this point.
+    closeSocket(serverSocket);
+
     if (clientSocket != INVALID_SOCKET)
     {
-        // No longer need the server socket at this point.
-        closeSocket(serverSocket);
-
         unblock(clientSocket);
 
         echoNextMessage(clientSocket);

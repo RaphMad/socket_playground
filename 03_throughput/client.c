@@ -18,6 +18,7 @@ int main()
 
     connectToServerSocket(clientSocket, serverIp, serverPort);
 
+    // Send seems send is always take the full data (even 1.9GB), so unblocking a send socket does not do a lot.
     unblock(clientSocket);
 
     // Build message consisting of 'CCCC...X'
@@ -28,12 +29,8 @@ int main()
 
     sendMessageToServer(clientSocket, buffer, messageLength);
 
-    // Graceful shutodwn - we signal to the server that we no longer want to send data.
-    // This allows to send an "early FIN" to the server.
-    // The server can still respond with some last data followed by his FIN.
-    shutdownSocket(clientSocket, SD_SEND);
-
-    // At this point the socket can be closed.
+    // Graceful shutdown
+    shutdownSocket(clientSocket, SD_BOTH);
     closeSocket(clientSocket);
 
     cleanupWinsock();
