@@ -2,6 +2,9 @@
 #include <signal.h>
 #include "..\\socket.h"
 
+// 1.9GB, about the largest size of memory that can be allocated before running into errors.
+// Note that you would not do this in production to send/receive large amounts of data,
+// but rather stream individual chunks of whatever is being transferred.
 #define BUFFER_SIZE 1900000000
 static char buffer[BUFFER_SIZE];
 
@@ -45,6 +48,7 @@ int main()
 
 void echoNextMessage(const SOCKET socket)
 {
+    // Read data until the buffer is full or 'X' is received.
     const u_long numberOfBytesReceived = receiveUntil(socket, buffer, BUFFER_SIZE, 'X');
 
     // Graceful shutdown.

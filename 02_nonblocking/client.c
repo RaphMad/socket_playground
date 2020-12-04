@@ -1,6 +1,9 @@
 #include <stdio.h>
 #include "..\\socket.h"
 
+// 1.9GB, about the largest size of memory that can be allocated before running into errors.
+// Note that you would not do this in production to send/receive large amounts of data,
+// but rather stream individual chunks of whatever is being transferred.
 #define BUFFER_SIZE 1900000000
 static char buffer[BUFFER_SIZE];
 
@@ -20,9 +23,13 @@ int main()
 
     unblock(clientSocket);
 
+    // Build message consisting of 'CCCC...X'
+    // Termination character is important because the server will rely on it to know that no more data will be received.
+    // Also leave out 2 bytes in the buffer, because the server will append its 2 byte postfix in the response.
     const size_t messageLength = BUFFER_SIZE - 2;
     memset(buffer, 'C', messageLength - 1);
     buffer[messageLength - 1] = 'X';
+
     sendMessageToServer(clientSocket, buffer, messageLength);
 
     // Graceful shutodwn - we signal to the server that we no longer want to send data.
