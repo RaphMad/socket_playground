@@ -14,6 +14,7 @@
 ** nonblock: wireshark seems to influence the result (OS level hangup), chunks from 1460 to about 20k ("small - big" pattern)
 
 * general - for some "magical" reason windows manages to arrive at the maximum throughput without packet drops (at least when testing in LAN)
+* some congestion avoidance (packet drops, then send rate is adjusted) can be seen when sender is in LAN, receiver is in WLAN -> there surely is some "carrier sensing" going on with senders, but its still strange it is so good at guessing a dynamic WLANs speed
 * reading in a nonblocking way seems to be "better" for the TCP algorithms, reaches max bandwidth regardless of wireshark/system load
 
 * Buffers
