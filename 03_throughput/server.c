@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <signal.h>
+#include <time.h>
 #include "..\\socket.h"
 
 #define BUFFER_SIZE 100 * 1000 * 1000
@@ -39,7 +40,17 @@ int main()
         unblock(clientSocket);
 
         // Read data until the buffer is full or 'X' is received.
+        clock_t ticks = clock();
         receiveUntil(clientSocket, buffer, BUFFER_SIZE, 'X');
+        ticks = clock() - ticks;
+
+        double timeTaken = ((double)ticks) / CLOCKS_PER_SEC;
+        double mbitPerSecond = BUFFER_SIZE / 1000 / 1000 / timeTaken * 8;
+
+        printf("Received %d MByte in %.2f s - %.2f MBit/s.\n",
+               BUFFER_SIZE / 1000 / 1000,
+               timeTaken,
+               mbitPerSecond);
 
         // Graceful shutdown
         shutdownSocket(clientSocket, SD_BOTH);

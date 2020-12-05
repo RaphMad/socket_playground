@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <time.h>
 #include "..\\socket.h"
 
 #define BUFFER_SIZE 100 * 1000 * 1000
@@ -27,7 +28,17 @@ int main()
     memset(buffer, 'C', messageLength - 1);
     buffer[messageLength - 1] = 'X';
 
+    clock_t ticks = clock();
     sendMessageToServer(clientSocket, buffer, messageLength);
+    ticks = clock() - ticks;
+
+    double timeTaken = ((double)ticks) / CLOCKS_PER_SEC;
+    double mbitPerSecond = BUFFER_SIZE / 1000 / 1000 / timeTaken * 8;
+
+    printf("Sent %d MByte in %.2f s - %.2f MBit/s (time taken to put it into the receive buffer).\n",
+           BUFFER_SIZE / 1000 / 1000,
+           timeTaken,
+           mbitPerSecond);
 
     // Graceful shutdown
     shutdownSocket(clientSocket, SD_BOTH);
