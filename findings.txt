@@ -33,8 +33,42 @@ sender will receive an ACK but will still indicate window size 0 - "0 bytes can 
 *** Packets are still dripping in at target while sending app was closed
 *** Memory shows a more "sane" value (at sender high while sending, at receiver going up while receiving)
 
+* Wireshark / Layer 1 / Layer 2:
+** Layer 1 ethernet packets have preamble (7 bytes), start frame delimiter (1 byte) and inter packet gap (12 bytes)
+** Wireshark does not show those
+** Layer 2 ethernet frames have the standard header stuff (14 byte), shown by wireshark + 4 byte check sequence (not shown by wireshark)
+** When a network device detects a corrupt FCS, the frame is simply discarded
+** Layer 3 TCP also does a checksum, re-transmits packets if checksum fails
+** But in general, higher level checksums should be applied to catch errors that occur "before" data is passed to the network https://www.evanjones.ca/tcp-and-ethernet-checksums-fail.html
+
+* Framing
+** TCP provides no concept of "complete" messages, its just a data stream. So protocols/applications need to use mechanisms like "message end markers" (computationally intensive to detect them mid-message, but HTTP seems to do this with double newline) or message-length headers (WS seems to do this - https://tools.ietf.org/html/rfc6455#section-5.2) to allow receivers to reconstruct messages.
+** UDP is packet-oriented up to a max size, so either apply the above mechanisms within single packets, or define an application-level protocol spanning multiple packets
+
+-- TODO
+
 - check tcp keepalive duration
-- experiment with half-open scenarios - possible via raw sockets?
 - check PSH flag, when is it set?
-- try to experiment with nagle + delayed acks
+- try to experiment with nagle + delayed acks - https://docs.microsoft.com/en-us/troubleshoot/windows/win32/data-segment-tcp-winsock
+
 - do a small udp app for comparison, esp. how it reaches max bandwidth and if there is heavy packet loss when sending too much (esp. LAN -> WLAN)
+
+- experiment with half-open scenarios - possible via raw sockets?
+
+- what is QUIC, look into it
+
+-- try to get an overview over the scenarios:
+
+windows
+
+blocking
+non-blocking
+async
+wsa event based
+overlapped i/o manual
+overlapped i/o + completion ports
+
+unix
+blocking
+non-blocking
+async

@@ -138,7 +138,7 @@ void bindServerSocket(const SOCKET serverSocket, const char *ip, const u_short p
 {
     struct sockaddr_in socketData = createSocketAddress(ip, port);
 
-    printf("Binding server socket to TCP port %s:%d...", ip, port);
+    printf("Binding server socket to %s:%d...", ip, port);
 
     if (bind(serverSocket, (const struct sockaddr *)&socketData, sizeof(socketData)) == SOCKET_ERROR)
     {
@@ -184,7 +184,7 @@ void connectToServerSocket(const SOCKET clientSocket, const char *const ip, cons
 {
     struct sockaddr_in socketData = createSocketAddress(ip, port);
 
-    printf("Binding server socket to TCP port %s:%d...", ip, port);
+    printf("Connecting to server socket at %s:%d...", ip, port);
 
     if (connect(clientSocket, (const struct sockaddr *)&socketData, sizeof(socketData)) == SOCKET_ERROR)
     {
