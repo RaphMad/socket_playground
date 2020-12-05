@@ -1,5 +1,6 @@
 * Shutdown protocol / "early FIN"
 * Windows stack sends RST when closing with incoming data (as well as on lots of other cases, e.g. sent unacked data?)
+* Sometimes referred to as "half-closed"
 
 
 * Block vs. non-block:
@@ -20,6 +21,9 @@
 * Buffers
 ** It seems that send buffer is not really limited, even 2GB can be put in there atomically
 ** Sending app can even terminate early, FINS will still be sent as expected
+** Receive buffer is actually receive window - it is defined as "max bytes that can be sent unacknowledged",
+but its also the acknowledge that updates the window size. So when no bytes are read by the application,
+sender will receive an ACK but will still indicate window size 0 - "0 bytes can be sent unacknowledged now".
 
 ** Blocking code:
 *** Packets are still dripping in at target while sending app was closed
@@ -29,9 +33,8 @@
 *** Packets are still dripping in at target while sending app was closed
 *** Memory shows a more "sane" value (at sender high while sending, at receiver going up while receiving)
 
-- tocheck next - whats the max receive buffer?
 - check tcp keepalive duration
-- experiment with half-open / half-closed scenarios
+- experiment with half-open scenarios - possible via raw sockets?
 - check PSH flag, when is it set?
-- do a small udp app for comparison, esp. how it reaches max bandwidth
 - try to experiment with nagle + delayed acks
+- do a small udp app for comparison, esp. how it reaches max bandwidth and if there is heavy packet loss when sending too much (esp. LAN -> WLAN)

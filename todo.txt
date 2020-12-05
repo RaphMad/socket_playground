@@ -5,9 +5,7 @@ microsoft tut: https://docs.microsoft.com/en-us/windows/win32/winsock/getting-st
 Check:
 
 nagle with lots of small packets (different graph w/w.o nagle? may need a slower network to have an effect)
-Send and rcv. buffer sizes
 
-do multiple attempts
 
 windows
 
@@ -24,7 +22,6 @@ non-blocking
 async
 
 tcp keepalive? (should be 2h in windows, but sometimes it is also referred to as 45s)
-tcp half closed? (is this even possible from winsock?, maybe with raw sockets)
 
 check PSH flag (not controllable from application, only occurs with multi-segment transmissions?
 
@@ -36,7 +33,3 @@ what even "is" layer1 w.r.t. ethernet - preemble, inter frame gap
 what is QUIC, look into it
 
 great article about winsock + delayed ack + nagle: https://docs.microsoft.com/en-us/troubleshoot/windows/win32/data-segment-tcp-winsock
-
-receive _window_ (max bytes in flight) vs receive _buffer_ (buffered data before application reads it) - any difference, what happens when the recv buffer is full?
-
-send buffer - test max - do not read at receiver while sending 2G (but this may actually be a test of the receive buffer)

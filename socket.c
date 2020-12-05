@@ -247,19 +247,19 @@ void sendAllData(const SOCKET socket, const char *const buffer, const size_t len
 
     while (sentBytes != length)
     {
-        sentBytes += sendData(socket, buffer + sentBytes, MIN(length, INT_MAX) - sentBytes);
+        sentBytes += sendData(socket, buffer + sentBytes, (int)(MIN(length, INT_MAX) - sentBytes));
     }
 }
 
 size_t receiveUntil(const SOCKET socket, char *const buffer, const size_t length, const char delimiter)
 {
-    printf("Waiting for data terminated by <%c> up to an amount of %d bytes...\n", delimiter, length);
+    printf("Waiting for data terminated by <%c> up to an amount of %zu bytes...\n", delimiter, length);
 
     size_t receivedBytes = 0;
 
     while (receivedBytes <= length)
     {
-        const size_t max_chunk = MIN(length - receivedBytes, INT_MAX);
+        const int max_chunk = (int)MIN(length - receivedBytes, INT_MAX);
         const size_t result = receiveData(socket, buffer + receivedBytes, max_chunk);
 
         // Returning with -1 is normal for non-blocking cases when no data was available.
