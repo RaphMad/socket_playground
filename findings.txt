@@ -48,7 +48,10 @@ sender will receive an ACK but will still indicate window size 0 - "0 bytes can 
 -- TODO
 
 - check tcp keepalive duration
+- dont sit in a blocking read, but in a read keypress -> send 1 byte after 1st keypress, then sit in another one (dont read it, check if packet gets acked - should, with window size 1 byte less)
+
 - check PSH flag, when is it set?
+- sockopts - which one exist, SO_LINGER, TCP_NODELAY, more?
 - try to experiment with nagle + delayed acks - https://docs.microsoft.com/en-us/troubleshoot/windows/win32/data-segment-tcp-winsock
 
 - do a small udp app for comparison, esp. how it reaches max bandwidth and if there is heavy packet loss when sending too much (esp. LAN -> WLAN)
@@ -56,6 +59,7 @@ sender will receive an ACK but will still indicate window size 0 - "0 bytes can 
 - experiment with half-open scenarios - possible via raw sockets?
 
 - what is QUIC, look into it
+- manually implement tls?
 
 -- try to get an overview over the scenarios:
 

@@ -20,3 +20,6 @@ void sendAllData(SOCKET socket, const char *buffer, size_t length);
 size_t receiveUntil(SOCKET socket, char *buffer, size_t length, char delimiter);
 
 void unblock(SOCKET socket);
+
+BOOL getSocketOption(SOCKET socket, int option);
+void setSocketOption(SOCKET socket, int option, BOOL value);

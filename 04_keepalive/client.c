@@ -19,6 +19,11 @@ int main()
 
     connectToServerSocket(clientSocket, serverIp, serverPort);
 
+    printf("Value of SO_KEEPALIVE: %d\n", getSocketOption(clientSocket, SO_KEEPALIVE));
+    printf("Setting SO_KEEPALIVE to true...\n");
+    setSocketOption(clientSocket, SO_KEEPALIVE, TRUE);
+    printf("Value of SO_KEEPALIVE: %d\n", getSocketOption(clientSocket, SO_KEEPALIVE));
+
     clock_t ticks = clock();
 
     // Perform a blocking receive thats never fulfilled

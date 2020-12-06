@@ -94,7 +94,6 @@ void shutdownSocket(SOCKET socket, int mode)
         if (shutdown(socket, mode) == SOCKET_ERROR)
         {
             printLastWSAError("shutdown()");
-            closeSocket(socket);
         }
         else
         {
@@ -289,11 +288,31 @@ void unblock(const SOCKET socket)
         if (ioctlsocket(socket, FIONBIO, &ul) == SOCKET_ERROR)
         {
             printLastWSAError("shutdown()");
-            closeSocket(socket);
         }
         else
         {
             printf(SUCCESS);
         }
+    }
+}
+
+BOOL getSocketOption(const SOCKET socket, const int option)
+{
+    BOOL value = FALSE;
+    int sizeOfBool = sizeof(BOOL);
+
+    if (getsockopt(socket, SOL_SOCKET, option, (char *)&value, &sizeOfBool) == SOCKET_ERROR)
+    {
+        printLastWSAError("getsockopt()");
+    }
+
+    return value;
+}
+
+void setSocketOption(const SOCKET socket, const int option, const BOOL value)
+{
+    if (setsockopt(socket, SOL_SOCKET, option, (char *)&value, sizeof(BOOL)) == SOCKET_ERROR)
+    {
+        printLastWSAError("getsockopt()");
     }
 }
