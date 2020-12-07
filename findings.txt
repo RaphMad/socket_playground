@@ -55,16 +55,14 @@ sender will receive an ACK but will still indicate window size 0 - "0 bytes can 
 ** Is better for the network (less packets) and in most cases even overall (effective bandwidth) when transmitting lots of small packets in quick succession (first packet is sent, waiting for first ack - meanwhile lots of packets can pile up and will be sent in a burst).
 ** In the test environment, the only positive effect is getting a better latency for packet 2 when disabling nagling (but at what cost?).
 
+* Socket options
+** Send/Recieve window size is reported as 64k, but in fact seems to be a lot higher (verified by maximum atomic send parameter + receive window in wireshark)
 
 - check PSH flag, when is it set?
-- sockopts - which one exist, SO_LINGER, TCP_NODELAY, more? (link page that explains linger setting vs. half-close)
-- try to experiment with nagle + delayed acks - https://docs.microsoft.com/en-us/troubleshoot/windows/win32/data-segment-tcp-winsock
 
 - do a small udp app for comparison, esp. how it reaches max bandwidth and if there is heavy packet loss when sending too much (esp. LAN -> WLAN)
 
 - experiment with half-open scenarios - possible via raw sockets?
-
-- what is QUIC, look into it
 - manually implement tls?
 
 -- try to get an overview over the scenarios:

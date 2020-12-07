@@ -19,7 +19,7 @@ int main()
     connectToServerSocket(clientSocket, serverIp, serverPort);
     unblock(clientSocket);
 
-    //setBooleanSocketOption(clientSocket, IPPROTO_TCP, TCP_NODELAY, TRUE);
+    setBooleanSocketOption(clientSocket, IPPROTO_TCP, TCP_NODELAY, TRUE);
     printf("Set TCP_NODELAY to %d\n", getBooleanSocketOption(clientSocket, IPPROTO_TCP, TCP_NODELAY));
 
     for (int i = 0; i < BUFFER_SIZE; i++)

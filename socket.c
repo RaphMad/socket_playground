@@ -316,3 +316,66 @@ void setBooleanSocketOption(const SOCKET socket, const int level, const int opti
         printLastWSAError("getsockopt()");
     }
 }
+
+int getIntegerSocketOption(SOCKET socket, int level, int option)
+{
+    int value = 0;
+    int sizeOfInt = sizeof(int);
+
+    if (getsockopt(socket, level, option, (char *)&value, &sizeOfInt) == SOCKET_ERROR)
+    {
+        printLastWSAError("getsockopt()");
+    }
+
+    return value;
+}
+
+void setIntegerSocketOption(SOCKET socket, int level, int option, int value)
+{
+    if (setsockopt(socket, level, option, (char *)&value, sizeof(int)) == SOCKET_ERROR)
+    {
+        printLastWSAError("getsockopt()");
+    }
+}
+
+DWORD getDWordSocketOption(SOCKET socket, int level, int option)
+{
+    int value = 0;
+    int sizeOfDword = sizeof(DWORD);
+
+    if (getsockopt(socket, level, option, (char *)&value, &sizeOfDword) == SOCKET_ERROR)
+    {
+        printLastWSAError("getsockopt()");
+    }
+
+    return value;
+}
+
+void setDWordSocketOption(SOCKET socket, int level, int option, DWORD value)
+{
+    if (setsockopt(socket, level, option, (char *)&value, sizeof(DWORD)) == SOCKET_ERROR)
+    {
+        printLastWSAError("getsockopt()");
+    }
+}
+
+struct linger getLingerSocketOption(SOCKET socket)
+{
+    struct linger value;
+    int sizeOfLinger = sizeof(struct linger);
+
+    if (getsockopt(socket, SOL_SOCKET, SO_LINGER, (char *)&value, &sizeOfLinger) == SOCKET_ERROR)
+    {
+        printLastWSAError("getsockopt()");
+    }
+
+    return value;
+}
+
+void setLingerSocketOption(SOCKET socket, const struct linger lingerOption)
+{
+    if (setsockopt(socket, SOL_SOCKET, SO_LINGER, (char *)&lingerOption, sizeof(struct linger)) == SOCKET_ERROR)
+    {
+        printLastWSAError("getsockopt()");
+    }
+}

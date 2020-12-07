@@ -23,3 +23,12 @@ void unblock(SOCKET socket);
 
 BOOL getBooleanSocketOption(SOCKET socket, int level, int option);
 void setBooleanSocketOption(SOCKET socket, int level, int option, BOOL value);
+
+int getIntegerSocketOption(SOCKET socket, int level, int option);
+void setIntegerSocketOption(SOCKET socket, int level, int option, int value);
+
+DWORD getDWordSocketOption(SOCKET socket, int level, int option);
+void setDWordSocketOption(SOCKET socket, int level, int option, DWORD value);
+
+struct linger getLingerSocketOption(SOCKET socket);
+void setLingerSocketOption(SOCKET socket, const struct linger lingerOption);
