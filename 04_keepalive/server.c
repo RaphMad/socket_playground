@@ -6,7 +6,6 @@
 #define BUFFER_SIZE 100 * 1000 * 1000
 static char buffer[BUFFER_SIZE];
 
-static const char *const serverIp = "192.168.1.1";
 static const u_short serverPort = 9000;
 
 static volatile SOCKET serverSocket = INVALID_SOCKET;
@@ -21,7 +20,7 @@ int main()
     initializeWinsock();
 
     serverSocket = createTcpSocket();
-    bindServerSocket(serverSocket, serverIp, serverPort);
+    bindServerSocket(serverSocket, serverPort);
     listenOnServerSocket(serverSocket);
 
     const SOCKET clientSocket = acceptClientSocket(serverSocket);
@@ -29,10 +28,10 @@ int main()
     // No longer need the server socket at this point.
     closeSocket(serverSocket);
 
-    printf("Value of SO_KEEPALIVE: %d\n", getSocketOption(clientSocket, SO_KEEPALIVE));
+    printf("Value of SO_KEEPALIVE: %d\n", getBooleanSocketOption(clientSocket, SOL_SOCKET, SO_KEEPALIVE));
     printf("Setting SO_KEEPALIVE to %d...\n", TRUE);
-    setSocketOption(clientSocket, SO_KEEPALIVE, TRUE);
-    printf("Value of SO_KEEPALIVE: %d\n", getSocketOption(clientSocket, SO_KEEPALIVE));
+    setBooleanSocketOption(clientSocket, SOL_SOCKET, SO_KEEPALIVE, TRUE);
+    printf("Value of SO_KEEPALIVE: %d\n", getBooleanSocketOption(clientSocket, SOL_SOCKET, SO_KEEPALIVE));
 
     if (clientSocket != INVALID_SOCKET)
     {

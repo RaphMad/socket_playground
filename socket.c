@@ -16,6 +16,7 @@
 #define ERROR_MESSAGE(string) ANSI_COLOR_RED string ANSI_COLOR_RESET
 
 static WSADATA wsaData;
+static BOOL verboseMode = TRUE;
 
 void printLastWSAError(const char *prefix)
 {
@@ -135,25 +136,14 @@ void closeSocket(const SOCKET socket)
     }
 }
 
-struct sockaddr_in createSocketAddress(const char *ip, const u_short port)
+void bindServerSocket(const SOCKET serverSocket, const u_short port)
 {
     struct sockaddr_in socketData;
     socketData.sin_family = AF_INET;
     socketData.sin_port = htons(port);
+    socketData.sin_addr.S_un.S_addr = INADDR_ANY;
 
-    if (inet_pton(AF_INET, ip, &socketData.sin_addr) != 1)
-    {
-        printWSAErrorCleanupAndExit("inet_pton()");
-    }
-
-    return socketData;
-}
-
-void bindServerSocket(const SOCKET serverSocket, const char *ip, const u_short port)
-{
-    struct sockaddr_in socketData = createSocketAddress(ip, port);
-
-    printf("Binding server socket to %s:%d...", ip, port);
+    printf("Binding server socket to  port %d...", port);
 
     if (bind(serverSocket, (const struct sockaddr *)&socketData, sizeof(socketData)) == SOCKET_ERROR)
     {
@@ -195,6 +185,20 @@ SOCKET acceptClientSocket(const SOCKET serverSocket)
     return clientSocket;
 }
 
+struct sockaddr_in createSocketAddress(const char *ip, const u_short port)
+{
+    struct sockaddr_in socketData;
+    socketData.sin_family = AF_INET;
+    socketData.sin_port = htons(port);
+
+    if (inet_pton(AF_INET, ip, &socketData.sin_addr) != 1)
+    {
+        printWSAErrorCleanupAndExit("inet_pton()");
+    }
+
+    return socketData;
+}
+
 void connectToServerSocket(const SOCKET clientSocket, const char *const ip, const u_short port)
 {
     struct sockaddr_in socketData = createSocketAddress(ip, port);
@@ -217,7 +221,8 @@ int sendData(const SOCKET socket, const char *const const buffer, const int leng
     {
         if (WSAGetLastError() == WSAEWOULDBLOCK)
         {
-            printf(INFO_MESSAGE("Cannot send right now\n"));
+            if (verboseMode)
+                printf(INFO_MESSAGE("Cannot send right now\n"));
         }
         else
         {
@@ -226,7 +231,8 @@ int sendData(const SOCKET socket, const char *const const buffer, const int leng
     }
     else
     {
-        printf(INFO_MESSAGE("Sent %d bytes\n"), result);
+        if (verboseMode)
+            printf(INFO_MESSAGE("Sent %d bytes\n"), result);
     }
 
     return result;
@@ -255,7 +261,8 @@ int receiveData(const SOCKET socket, char *const buffer, const int length)
     }
     else
     {
-        printf(INFO_MESSAGE("Received %d bytes\n"), result);
+        if (verboseMode)
+            printf(INFO_MESSAGE("Received %d bytes\n"), result);
     }
 
     return result;
@@ -275,7 +282,8 @@ void sendAllData(const SOCKET socket, const char *const buffer, const size_t len
 
 size_t receiveUntil(const SOCKET socket, char *const buffer, const size_t length, const char delimiter)
 {
-    printf("Waiting for data terminated by <%c> up to an amount of %zu bytes...\n", delimiter, length);
+    if (verboseMode)
+        printf("Waiting for data terminated by <%c> up to an amount of %zu bytes...\n", delimiter, length);
 
     size_t receivedBytes = 0;
 
@@ -401,4 +409,9 @@ void setLingerSocketOption(SOCKET socket, const struct linger lingerOption)
     {
         printLastWSAError("getsockopt()");
     }
+}
+
+void setVerbosity(BOOL verbose)
+{
+    verboseMode = verbose;
 }

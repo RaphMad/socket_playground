@@ -21,6 +21,7 @@ int main()
 
     // Send seems send is always take the full data (even 1.9GB), so unblocking a send socket does not do a lot.
     unblock(clientSocket);
+    setVerbosity(FALSE);
 
     // Build message consisting of 'CCCC...X'
     // Termination character is important because the server will rely on it to know that no more data will be received.

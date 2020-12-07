@@ -19,6 +19,7 @@ int main()
 
     connectToServerSocket(clientSocket, serverIp, serverPort);
     unblock(clientSocket);
+    setVerbosity(FALSE);
 
     memset(buffer, 'U', BUFFER_SIZE);
 

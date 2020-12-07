@@ -6,7 +6,6 @@
 #define BUFFER_SIZE 65507
 static char buffer[BUFFER_SIZE];
 
-static const char *const serverIp = "192.168.1.1";
 static const u_short serverPort = 9000;
 
 static volatile SOCKET serverSocket = INVALID_SOCKET;
@@ -22,7 +21,7 @@ int main()
 
     serverSocket = createUdpSocket();
     const int maxMessageSize = getIntegerSocketOption(serverSocket, SOL_SOCKET, SO_MAX_MSG_SIZE);
-    bindServerSocket(serverSocket, serverIp, serverPort);
+    bindServerSocket(serverSocket, serverPort);
 
     unblock(serverSocket);
 

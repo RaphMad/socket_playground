@@ -8,7 +8,6 @@
 #define BUFFER_SIZE 1900000000
 static char buffer[BUFFER_SIZE];
 
-static const char *const ip = "192.168.1.1";
 static const u_short port = 9000;
 
 static volatile SOCKET serverSocket = INVALID_SOCKET;
@@ -23,7 +22,7 @@ int main()
     initializeWinsock();
 
     serverSocket = createTcpSocket();
-    bindServerSocket(serverSocket, ip, port);
+    bindServerSocket(serverSocket, port);
     listenOnServerSocket(serverSocket);
 
     const SOCKET clientSocket = acceptClientSocket(serverSocket);
@@ -49,7 +48,7 @@ int main()
 void echoNextMessage(const SOCKET socket)
 {
     // Read data until the buffer is full or 'X' is received.
-    const u_long numberOfBytesReceived = receiveUntil(socket, buffer, BUFFER_SIZE, 'X');
+    const size_t numberOfBytesReceived = receiveUntil(socket, buffer, BUFFER_SIZE, 'X');
 
     // Graceful shutdown.
     // This has no notable effect on our static communication protocol,

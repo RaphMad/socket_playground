@@ -6,7 +6,6 @@
 #define BUFFER_SIZE 100 * 1000 * 1000
 static char buffer[BUFFER_SIZE];
 
-static const char *const serverIp = "192.168.1.1";
 static const u_short serverPort = 9000;
 
 static volatile SOCKET serverSocket = INVALID_SOCKET;
@@ -21,7 +20,7 @@ int main()
     initializeWinsock();
 
     serverSocket = createTcpSocket();
-    bindServerSocket(serverSocket, serverIp, serverPort);
+    bindServerSocket(serverSocket, serverPort);
     listenOnServerSocket(serverSocket);
 
     const SOCKET clientSocket = acceptClientSocket(serverSocket);
@@ -38,6 +37,7 @@ int main()
         // This does not happen with non-blocking reads in a loop in the same WLAN environment
         // (it can also be seen that smaller chunks are received and wireshark shows no TCP window).
         unblock(clientSocket);
+        setVerbosity(FALSE);
 
         // Read data until the buffer is full or 'X' is received.
         clock_t ticks = clock();

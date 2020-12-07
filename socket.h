@@ -9,7 +9,7 @@ SOCKET createUdpSocket();
 void shutdownSocket(SOCKET socket, int mode);
 void closeSocket(SOCKET socket);
 
-void bindServerSocket(SOCKET serverSocket, const char *ip, u_short port);
+void bindServerSocket(SOCKET serverSocket, u_short port);
 void listenOnServerSocket(SOCKET serverSocket);
 SOCKET acceptClientSocket(SOCKET serverSocket);
 
@@ -34,3 +34,5 @@ void setDWordSocketOption(SOCKET socket, int level, int option, DWORD value);
 
 struct linger getLingerSocketOption(SOCKET socket);
 void setLingerSocketOption(SOCKET socket, const struct linger lingerOption);
+
+void setVerbosity(BOOL verbose);
