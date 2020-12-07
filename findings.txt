@@ -16,7 +16,7 @@
 
 * general - for some "magical" reason windows manages to arrive at the maximum throughput without packet drops (at least when testing in LAN)
 * some congestion avoidance (packet drops, then send rate is adjusted) can be seen when sender is in LAN, receiver is in WLAN -> there surely is some "carrier sensing" going on with senders, but its still strange it is so good at guessing a dynamic WLANs speed
-* Seems like I just confused sender/reciver - of course congestion handling is done by sender -> Shows nice linear growth until packet loss occurs and speed stabilizes
+* Seems like I just confused sender/reciver - of course congestion handling is done by sender -> Shows nice linear growth until packet loss occurs and speed stabilizes, but again sometimes there are minor drops, but not when reaching max bandwidth
 * reading in a nonblocking way seems to be "better" for the TCP algorithms, reaches max bandwidth regardless of wireshark/system load
 
 * Buffers
@@ -51,9 +51,10 @@ sender will receive an ACK but will still indicate window size 0 - "0 bytes can 
 ** Visible in Wireshark when both clients are up
 ** Invisible in Wireshark when one client has gone missing - still get an aplication level event (why?)
 
--- TODO <new>
+* Nagling
+** Is better for the network (less packets) and in most cases even overall (effective bandwidth) when transmitting lots of small packets in quick succession (first packet is sent, waiting for first ack - meanwhile lots of packets can pile up and will be sent in a burst).
+** In the test environment, the only positive effect is getting a better latency for packet 2 when disabling nagling (but at what cost?).
 
-- do congestion window / max speed test analysis from both sides, check why dup acks show up in sender log, but everything looks fine in receiver log - it seems this is a general retransmission pattern visible in logs?
 
 - check PSH flag, when is it set?
 - sockopts - which one exist, SO_LINGER, TCP_NODELAY, more? (link page that explains linger setting vs. half-close)

@@ -21,5 +21,5 @@ size_t receiveUntil(SOCKET socket, char *buffer, size_t length, char delimiter);
 
 void unblock(SOCKET socket);
 
-BOOL getSocketOption(SOCKET socket, int option);
-void setSocketOption(SOCKET socket, int option, BOOL value);
+BOOL getBooleanSocketOption(SOCKET socket, int level, int option);
+void setBooleanSocketOption(SOCKET socket, int level, int option, BOOL value);

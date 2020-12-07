@@ -296,12 +296,12 @@ void unblock(const SOCKET socket)
     }
 }
 
-BOOL getSocketOption(const SOCKET socket, const int option)
+BOOL getBooleanSocketOption(const SOCKET socket, const int level, const int option)
 {
     BOOL value = FALSE;
     int sizeOfBool = sizeof(BOOL);
 
-    if (getsockopt(socket, SOL_SOCKET, option, (char *)&value, &sizeOfBool) == SOCKET_ERROR)
+    if (getsockopt(socket, level, option, (char *)&value, &sizeOfBool) == SOCKET_ERROR)
     {
         printLastWSAError("getsockopt()");
     }
@@ -309,9 +309,9 @@ BOOL getSocketOption(const SOCKET socket, const int option)
     return value;
 }
 
-void setSocketOption(const SOCKET socket, const int option, const BOOL value)
+void setBooleanSocketOption(const SOCKET socket, const int level, const int option, const BOOL value)
 {
-    if (setsockopt(socket, SOL_SOCKET, option, (char *)&value, sizeof(BOOL)) == SOCKET_ERROR)
+    if (setsockopt(socket, level, option, (char *)&value, sizeof(BOOL)) == SOCKET_ERROR)
     {
         printLastWSAError("getsockopt()");
     }

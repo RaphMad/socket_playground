@@ -1,8 +1,7 @@
 #include <stdio.h>
-#include <time.h>
 #include "..\\socket.h"
 
-#define BUFFER_SIZE 100 * 1000 * 1000
+#define BUFFER_SIZE 1000
 static char buffer[BUFFER_SIZE];
 
 static const char *const serverIp = "192.168.1.1";
@@ -18,20 +17,15 @@ int main()
     const SOCKET clientSocket = createSocket();
 
     connectToServerSocket(clientSocket, serverIp, serverPort);
+    unblock(clientSocket);
 
-    setBooleanSocketOption(clientSocket, SOL_SOCKET, SO_KEEPALIVE, TRUE);
-    printf("Set SO_KEEPALIVE to %d\n", getBooleanSocketOption(clientSocket, SOL_SOCKET, SO_KEEPALIVE));
+    //setBooleanSocketOption(clientSocket, IPPROTO_TCP, TCP_NODELAY, TRUE);
+    printf("Set TCP_NODELAY to %d\n", getBooleanSocketOption(clientSocket, IPPROTO_TCP, TCP_NODELAY));
 
-    clock_t ticks = clock();
-
-    printf("Press any key to close socket\n");
-    getchar();
-
-    ticks = clock() - ticks;
-
-    double timeTaken = ((double)ticks) / CLOCKS_PER_SEC;
-
-    printf("TCP connection was closed due to timeout after %.2f s.\n", timeTaken);
+    for (int i = 0; i < BUFFER_SIZE; i++)
+    {
+        sendData(clientSocket, "P", 1);
+    }
 
     // Graceful shutdown
     shutdownSocket(clientSocket, SD_BOTH);
