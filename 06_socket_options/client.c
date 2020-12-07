@@ -14,7 +14,7 @@ int main()
 {
     initializeWinsock();
 
-    const SOCKET clientSocket = createSocket();
+    const SOCKET clientSocket = createTcpSocket();
 
     connectToServerSocket(clientSocket, serverIp, serverPort);
     unblock(clientSocket);

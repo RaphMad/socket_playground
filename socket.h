@@ -3,7 +3,9 @@
 void initializeWinsock();
 void cleanupWinsock();
 
-SOCKET createSocket();
+SOCKET createTcpSocket();
+SOCKET createUdpSocket();
+
 void shutdownSocket(SOCKET socket, int mode);
 void closeSocket(SOCKET socket);
 

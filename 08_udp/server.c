@@ -2,8 +2,8 @@
 #include <signal.h>
 #include "..\\socket.h"
 
-// Just a bit more than MSS
-#define BUFFER_SIZE 1461
+// Max IP segment size, will cause fragmentation.
+#define BUFFER_SIZE 65507
 static char buffer[BUFFER_SIZE];
 
 static const char *const serverIp = "192.168.1.1";
@@ -20,25 +20,19 @@ int main()
 
     initializeWinsock();
 
-    serverSocket = createTcpSocket();
+    serverSocket = createUdpSocket();
+    const int maxMessageSize = getIntegerSocketOption(serverSocket, SOL_SOCKET, SO_MAX_MSG_SIZE);
     bindServerSocket(serverSocket, serverIp, serverPort);
-    listenOnServerSocket(serverSocket);
 
-    const SOCKET clientSocket = acceptClientSocket(serverSocket);
+    unblock(serverSocket);
 
-    // No longer need the server socket at this point.
+    receiveUntil(serverSocket, buffer, maxMessageSize, ' ');
+
+    printf("Last 2 chars: %c%c\n", buffer[maxMessageSize - 2], buffer[maxMessageSize - 1]);
+
+    // Graceful shutdown
+    shutdownSocket(serverSocket, SD_BOTH);
     closeSocket(serverSocket);
-
-    if (clientSocket != INVALID_SOCKET)
-    {
-        unblock(clientSocket);
-
-        receiveUntil(clientSocket, buffer, BUFFER_SIZE, ' ');
-
-        // Graceful shutdown
-        shutdownSocket(clientSocket, SD_BOTH);
-        closeSocket(clientSocket);
-    }
 
     cleanupWinsock();
 

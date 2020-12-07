@@ -22,7 +22,7 @@ int main()
 
     initializeWinsock();
 
-    serverSocket = createSocket();
+    serverSocket = createTcpSocket();
     bindServerSocket(serverSocket, ip, port);
     listenOnServerSocket(serverSocket);
 

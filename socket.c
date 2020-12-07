@@ -69,20 +69,36 @@ void cleanupWinsock()
     printf(SUCCESS);
 }
 
-SOCKET createSocket()
+SOCKET createTcpSocket()
 {
-    printf("Creating server socket...");
+    printf("Creating TCP socket...");
 
-    SOCKET serverSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+    SOCKET createdSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 
-    if (serverSocket == INVALID_SOCKET)
+    if (createdSocket == INVALID_SOCKET)
     {
         printWSAErrorCleanupAndExit("socket()");
     }
 
     printf(SUCCESS);
 
-    return serverSocket;
+    return createdSocket;
+}
+
+SOCKET createUdpSocket()
+{
+    printf("Creating UDP socket...");
+
+    SOCKET createdSocket = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
+
+    if (createdSocket == INVALID_SOCKET)
+    {
+        printWSAErrorCleanupAndExit("socket()");
+    }
+
+    printf(SUCCESS);
+
+    return createdSocket;
 }
 
 void shutdownSocket(SOCKET socket, int mode)
@@ -153,7 +169,7 @@ void listenOnServerSocket(const SOCKET serverSocket)
 
     if (listen(serverSocket, SOMAXCONN) == SOCKET_ERROR)
     {
-        printWSAErrorCleanupAndExit("bind()");
+        printWSAErrorCleanupAndExit("listen()");
     }
 
     printf(SUCCESS);
@@ -256,7 +272,7 @@ size_t receiveUntil(const SOCKET socket, char *const buffer, const size_t length
 
     size_t receivedBytes = 0;
 
-    while (receivedBytes <= length)
+    while (receivedBytes < length)
     {
         const int max_chunk = (int)MIN(length - receivedBytes, INT_MAX);
         const size_t result = receiveData(socket, buffer + receivedBytes, max_chunk);
