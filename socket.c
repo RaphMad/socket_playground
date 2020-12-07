@@ -215,7 +215,14 @@ int sendData(const SOCKET socket, const char *const const buffer, const int leng
 
     if (result == SOCKET_ERROR)
     {
-        printWSAErrorCleanupAndExit("send()");
+        if (WSAGetLastError() == WSAEWOULDBLOCK)
+        {
+            printf(INFO_MESSAGE("Cannot send right now\n"));
+        }
+        else
+        {
+            printWSAErrorCleanupAndExit("send()");
+        }
     }
     else
     {

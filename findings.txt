@@ -60,7 +60,12 @@ sender will receive an ACK but will still indicate window size 0 - "0 bytes can 
 
 * PSH flag is set only for the last packet, when data > MSS is sent via a single call
 
-- do a small udp app for comparison, esp. how it reaches max bandwidth and if there is heavy packet loss when sending too much (esp. LAN -> WLAN)
+* UDP can flood the network, but it seems this needs multiple instances to reach limits
+* limits are higher than TCP (as expected)
+* Detecting packet loss is actually hard in such scenarios (would need something like numbers counting up)
+* Windows built-in speed tool (task manager) shows reached speeds quite nicely
+** can reach up to 1gbps via wire, but console output is the bottleneck in that case (need to close conhost but keep app running), also 3-4 instances are needed
+
 
 - experiment with half-open scenarios - possible via raw sockets?
 - manually implement tls?
