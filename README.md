@@ -1,8 +1,7 @@
 ## Introduction
 
 This project contains some examples and experiments regarding the usage of sockets in **C** in **Windows**, using **Winsock 2**.
-
-The project is not tailored towards any specific IDE, although I personally used **Visual Studio Code** with its **C/C++** extension and the **Microsoft C++ compiler**.
+For building I used **Visual Studio Code** with its **C/C++** extension and the **Microsoft C++ compiler**.
 
 ## Build
 
