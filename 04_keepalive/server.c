@@ -30,7 +30,7 @@ int main()
     closeSocket(serverSocket);
 
     printf("Value of SO_KEEPALIVE: %d\n", getSocketOption(clientSocket, SO_KEEPALIVE));
-    printf("Setting SO_KEEPALIVE to true...\n");
+    printf("Setting SO_KEEPALIVE to %d...\n", TRUE);
     setSocketOption(clientSocket, SO_KEEPALIVE, TRUE);
     printf("Value of SO_KEEPALIVE: %d\n", getSocketOption(clientSocket, SO_KEEPALIVE));
 
@@ -38,8 +38,8 @@ int main()
     {
         clock_t ticks = clock();
 
-        // Perform a blocking receive thats never fulfilled
-        receiveData(clientSocket, buffer, BUFFER_SIZE);
+        printf("Press any key to close socket\n");
+        getchar();
 
         ticks = clock() - ticks;
 

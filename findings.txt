@@ -16,6 +16,7 @@
 
 * general - for some "magical" reason windows manages to arrive at the maximum throughput without packet drops (at least when testing in LAN)
 * some congestion avoidance (packet drops, then send rate is adjusted) can be seen when sender is in LAN, receiver is in WLAN -> there surely is some "carrier sensing" going on with senders, but its still strange it is so good at guessing a dynamic WLANs speed
+* Seems like I just confused sender/reciver - of course congestion handling is done by sender -> Shows nice linear growth until packet loss occurs and speed stabilizes
 * reading in a nonblocking way seems to be "better" for the TCP algorithms, reaches max bandwidth regardless of wireshark/system load
 
 * Buffers
@@ -45,13 +46,17 @@ sender will receive an ACK but will still indicate window size 0 - "0 bytes can 
 ** TCP provides no concept of "complete" messages, its just a data stream. So protocols/applications need to use mechanisms like "message end markers" (computationally intensive to detect them mid-message, but HTTP seems to do this with double newline) or message-length headers (WS seems to do this - https://tools.ietf.org/html/rfc6455#section-5.2) to allow receivers to reconstruct messages.
 ** UDP is packet-oriented up to a max size, so either apply the above mechanisms within single packets, or define an application-level protocol spanning multiple packets
 
--- TODO
+* Keepalive
+** Can be activated via socket option, 2 hours default time
+** Visible in Wireshark when both clients are up
+** Invisible in Wireshark when one client has gone missing - still get an aplication level event (why?)
 
-- check tcp keepalive duration
-- dont sit in a blocking read, but in a read keypress -> send 1 byte after 1st keypress, then sit in another one (dont read it, check if packet gets acked - should, with window size 1 byte less)
+-- TODO <new>
+
+- do congestion window / max speed test analysis from both sides, check why dup acks show up in sender log, but everything looks fine in receiver log - it seems this is a general retransmission pattern visible in logs?
 
 - check PSH flag, when is it set?
-- sockopts - which one exist, SO_LINGER, TCP_NODELAY, more?
+- sockopts - which one exist, SO_LINGER, TCP_NODELAY, more? (link page that explains linger setting vs. half-close)
 - try to experiment with nagle + delayed acks - https://docs.microsoft.com/en-us/troubleshoot/windows/win32/data-segment-tcp-winsock
 
 - do a small udp app for comparison, esp. how it reaches max bandwidth and if there is heavy packet loss when sending too much (esp. LAN -> WLAN)
