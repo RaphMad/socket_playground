@@ -58,7 +58,7 @@ sender will receive an ACK but will still indicate window size 0 - "0 bytes can 
 * Socket options
 ** Send/Recieve window size is reported as 64k, but in fact seems to be a lot higher (verified by maximum atomic send parameter + receive window in wireshark)
 
-- check PSH flag, when is it set?
+* PSH flag is set only for the last packet, when data > MSS is sent via a single call
 
 - do a small udp app for comparison, esp. how it reaches max bandwidth and if there is heavy packet loss when sending too much (esp. LAN -> WLAN)
 
