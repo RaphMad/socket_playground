@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <signal.h>
-#include "..\\socket.h"
+#include "..\\lib\\socket\\socket.h"
 
 // Just a bit more than MSS
 #define BUFFER_SIZE 1461

@@ -15,7 +15,7 @@
 				"${fileDirname}\\out\\",
 				"/Fo:",
 				"${fileDirname}\\out\\",
-				"..\\socket.c",
+				"${fileDirname}\\..\\lib\\socket\\socket.c",
 				"${file}"
 			],
 			"options": {

@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <signal.h>
-#include "..\\socket.h"
+#include "..\\lib\\socket\\socket.h"
 
 // Max IP segment size, will cause fragmentation.
 #define BUFFER_SIZE 65507

@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include "..\\socket.h"
+#include "..\\lib\\socket\\socket.h"
 
 // 1.9GB, about the largest size of memory that can be allocated before running into errors.
 // Note that you would not do this in production to send/receive large amounts of data,

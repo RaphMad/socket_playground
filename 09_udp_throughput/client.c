@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include "..\\socket.h"
+#include "..\\lib\\socket\\socket.h"
 
 // Based on ethernet MTU.
 #define BUFFER_SIZE 1472

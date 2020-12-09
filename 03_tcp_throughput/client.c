@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <time.h>
-#include "..\\socket.h"
+#include "..\\lib\\socket\\socket.h"
 
 #define BUFFER_SIZE 100 * 1000 * 1000
 static char buffer[BUFFER_SIZE];

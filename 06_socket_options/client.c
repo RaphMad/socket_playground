@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include "..\\socket.h"
+#include "..\\lib\\socket\\socket.h"
 
 #define BUFFER_SIZE 1000 * 1000 * 100
 static char buffer[BUFFER_SIZE];
