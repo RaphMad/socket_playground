@@ -1,9 +1,8 @@
 #include <stdio.h>
 #include <signal.h>
-#include "..\\lib\\socket\\socket.h"
+#include "..\\..\\lib\\socket\\socket.h"
 
-// Just a bit more than MSS
-#define BUFFER_SIZE 1461
+#define BUFFER_SIZE 1000 * 1000 * 100
 static char buffer[BUFFER_SIZE];
 
 static const u_short serverPort = 9000;
@@ -33,6 +32,15 @@ int main()
         unblock(clientSocket);
 
         receiveUntil(clientSocket, buffer, BUFFER_SIZE, ' ');
+
+        printf("SO_KEEPALIVE: %d\n", getBooleanSocketOption(clientSocket, SOL_SOCKET, SO_KEEPALIVE));
+        printf("TCP_NODELAY: %d\n", getBooleanSocketOption(clientSocket, IPPROTO_TCP, TCP_NODELAY));
+        printf("SO_LINGER.l_onoff: %d\n", getLingerSocketOption(clientSocket).l_onoff);
+        printf("SO_LINGER.l_linger: %d\n", getLingerSocketOption(clientSocket).l_linger);
+        printf("SO_RCVBUF: %d\n", getBooleanSocketOption(clientSocket, SOL_SOCKET, SO_RCVBUF));
+        printf("SO_RCVTIMEO: %d\n", getDWordSocketOption(clientSocket, SOL_SOCKET, SO_RCVTIMEO));
+        printf("SO_SNDBUF: %d\n", getBooleanSocketOption(clientSocket, SOL_SOCKET, SO_SNDBUF));
+        printf("SO_SNDTIMEO: %d\n", getDWordSocketOption(clientSocket, SOL_SOCKET, SO_SNDTIMEO));
 
         // Graceful shutdown
         shutdownSocket(clientSocket, SD_BOTH);

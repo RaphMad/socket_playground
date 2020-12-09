@@ -1,7 +1,8 @@
 #include <stdio.h>
-#include "..\\lib\\socket\\socket.h"
+#include "..\\..\\lib\\socket\\socket.h"
 
-#define BUFFER_SIZE 1000
+// Based on ethernet MTU.
+#define BUFFER_SIZE 1472
 static char buffer[BUFFER_SIZE];
 
 static const char *const serverIp = "192.168.1.1";
@@ -14,17 +15,17 @@ int main()
 {
     initializeWinsock();
 
-    const SOCKET clientSocket = createTcpSocket();
+    const SOCKET clientSocket = createUdpSocket();
 
     connectToServerSocket(clientSocket, serverIp, serverPort);
     unblock(clientSocket);
+    setVerbosity(FALSE);
 
-    setBooleanSocketOption(clientSocket, IPPROTO_TCP, TCP_NODELAY, TRUE);
-    printf("Set TCP_NODELAY to %d\n", getBooleanSocketOption(clientSocket, IPPROTO_TCP, TCP_NODELAY));
+    memset(buffer, 'U', BUFFER_SIZE);
 
-    for (int i = 0; i < BUFFER_SIZE; i++)
+    while (TRUE)
     {
-        sendData(clientSocket, "P", 1);
+        sendAllData(clientSocket, buffer, BUFFER_SIZE);
     }
 
     // Graceful shutdown

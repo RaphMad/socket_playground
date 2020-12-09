@@ -1,8 +1,7 @@
 #include <stdio.h>
-#include "..\\lib\\socket\\socket.h"
+#include "..\\..\\lib\\socket\\socket.h"
 
-// Max IP segment size, will cause fragmentation.
-#define BUFFER_SIZE 65507
+#define BUFFER_SIZE 1000
 static char buffer[BUFFER_SIZE];
 
 static const char *const serverIp = "192.168.1.1";
@@ -15,16 +14,18 @@ int main()
 {
     initializeWinsock();
 
-    const SOCKET clientSocket = createUdpSocket();
-    const int maxMessageSize = getIntegerSocketOption(clientSocket, SOL_SOCKET, SO_MAX_MSG_SIZE);
+    const SOCKET clientSocket = createTcpSocket();
 
     connectToServerSocket(clientSocket, serverIp, serverPort);
     unblock(clientSocket);
 
-    memset(buffer, 'U', maxMessageSize - 1);
-    buffer[maxMessageSize - 1] = 'X';
+    setBooleanSocketOption(clientSocket, IPPROTO_TCP, TCP_NODELAY, TRUE);
+    printf("Set TCP_NODELAY to %d\n", getBooleanSocketOption(clientSocket, IPPROTO_TCP, TCP_NODELAY));
 
-    sendAllData(clientSocket, buffer, maxMessageSize);
+    for (int i = 0; i < BUFFER_SIZE; i++)
+    {
+        sendData(clientSocket, "P", 1);
+    }
 
     // Graceful shutdown
     shutdownSocket(clientSocket, SD_BOTH);

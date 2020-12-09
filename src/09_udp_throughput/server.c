@@ -1,9 +1,9 @@
 #include <stdio.h>
 #include <signal.h>
-#include "..\\lib\\socket\\socket.h"
+#include "..\\..\\lib\\socket\\socket.h"
 
-// Max IP segment size, will cause fragmentation.
-#define BUFFER_SIZE 65507
+// Based on ethernet MTU.
+#define BUFFER_SIZE 1472
 static char buffer[BUFFER_SIZE];
 
 static const u_short serverPort = 9000;
@@ -20,14 +20,15 @@ int main()
     initializeWinsock();
 
     serverSocket = createUdpSocket();
-    const int maxMessageSize = getIntegerSocketOption(serverSocket, SOL_SOCKET, SO_MAX_MSG_SIZE);
     bindServerSocket(serverSocket, serverPort);
 
     unblock(serverSocket);
+    setVerbosity(FALSE);
 
-    receiveUntil(serverSocket, buffer, maxMessageSize, ' ');
-
-    printf("Last 2 chars: %c%c\n", buffer[maxMessageSize - 2], buffer[maxMessageSize - 1]);
+    while (TRUE)
+    {
+        receiveUntil(serverSocket, buffer, BUFFER_SIZE, ' ');
+    }
 
     // Graceful shutdown
     shutdownSocket(serverSocket, SD_BOTH);

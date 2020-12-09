@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include "..\\lib\\socket\\socket.h"
+#include "..\\..\\lib\\socket\\socket.h"
 
 // 1.9GB, about the largest size of memory that can be allocated before running into errors.
 // Note that you would not do this in production to send/receive large amounts of data,
@@ -20,6 +20,8 @@ int main()
     const SOCKET clientSocket = createTcpSocket();
 
     connectToServerSocket(clientSocket, ip, port);
+
+    unblock(clientSocket);
 
     // Build message consisting of 'CCCC...X'
     // Termination character is important because the server will rely on it to know that no more data will be received.

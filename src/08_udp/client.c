@@ -1,8 +1,8 @@
 #include <stdio.h>
-#include "..\\lib\\socket\\socket.h"
+#include "..\\..\\lib\\socket\\socket.h"
 
-// Based on ethernet MTU.
-#define BUFFER_SIZE 1472
+// Max IP segment size, will cause fragmentation.
+#define BUFFER_SIZE 65507
 static char buffer[BUFFER_SIZE];
 
 static const char *const serverIp = "192.168.1.1";
@@ -16,17 +16,15 @@ int main()
     initializeWinsock();
 
     const SOCKET clientSocket = createUdpSocket();
+    const int maxMessageSize = getIntegerSocketOption(clientSocket, SOL_SOCKET, SO_MAX_MSG_SIZE);
 
     connectToServerSocket(clientSocket, serverIp, serverPort);
     unblock(clientSocket);
-    setVerbosity(FALSE);
 
-    memset(buffer, 'U', BUFFER_SIZE);
+    memset(buffer, 'U', maxMessageSize - 1);
+    buffer[maxMessageSize - 1] = 'X';
 
-    while (TRUE)
-    {
-        sendAllData(clientSocket, buffer, BUFFER_SIZE);
-    }
+    sendAllData(clientSocket, buffer, maxMessageSize);
 
     // Graceful shutdown
     shutdownSocket(clientSocket, SD_BOTH);

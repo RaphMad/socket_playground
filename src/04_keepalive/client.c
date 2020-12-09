@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <time.h>
-#include "..\\lib\\socket\\socket.h"
+#include "..\\..\\lib\\socket\\socket.h"
 
 #define BUFFER_SIZE 100 * 1000 * 1000
 static char buffer[BUFFER_SIZE];
@@ -19,27 +19,19 @@ int main()
 
     connectToServerSocket(clientSocket, serverIp, serverPort);
 
-    // Send seems send is always take the full data (even 1.9GB), so unblocking a send socket does not do a lot.
-    unblock(clientSocket);
-    setVerbosity(FALSE);
-
-    // Build message consisting of 'CCCC...X'
-    // Termination character is important because the server will rely on it to know that no more data will be received.
-    const size_t messageLength = BUFFER_SIZE;
-    memset(buffer, 'C', messageLength - 1);
-    buffer[messageLength - 1] = 'X';
+    setBooleanSocketOption(clientSocket, SOL_SOCKET, SO_KEEPALIVE, TRUE);
+    printf("Set SO_KEEPALIVE to %d\n", getBooleanSocketOption(clientSocket, SOL_SOCKET, SO_KEEPALIVE));
 
     clock_t ticks = clock();
-    sendMessageToServer(clientSocket, buffer, messageLength);
+
+    printf("Press any key to close socket\n");
+    getchar();
+
     ticks = clock() - ticks;
 
     double timeTaken = ((double)ticks) / CLOCKS_PER_SEC;
-    double mbitPerSecond = BUFFER_SIZE / 1000 / 1000 / timeTaken * 8;
 
-    printf("Sent %d MByte in %.2f s - %.2f MBit/s (time taken to put it into the receive buffer).\n",
-           BUFFER_SIZE / 1000 / 1000,
-           timeTaken,
-           mbitPerSecond);
+    printf("TCP connection was closed due to timeout after %.2f s.\n", timeTaken);
 
     // Graceful shutdown
     shutdownSocket(clientSocket, SD_BOTH);
